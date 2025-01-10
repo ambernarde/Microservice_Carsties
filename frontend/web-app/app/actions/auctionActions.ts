@@ -1,4 +1,5 @@
 'use server';
+import { auth } from "@/auth";
 import { Auction, PagedResult } from "@/types";
 
 
@@ -16,14 +17,20 @@ export async function updateAuctionTest() {
       mileage: Math.floor(Math.random() * 10000) + 1
   }
 try {
-  const res = await fetch('htpp://localhost:6001/auctions', {
+
+  const session = await auth();
+
+  const res = await fetch('http://localhost:6001/auctions/2baa2d43-77d7-4e28-894d-74f685c3121c', {
     method:'PUT',
-    headers:{}, 
+    headers:{
+      'Content-type' : 'application/json',
+      'Authorization' : 'Bearer ' + session?.accessToken
+    }, 
     body : JSON.stringify(data)
    });
 
    if (!res.ok) return {status: res.status,message: res.statusText}
-   return res.json();  
+   return res.statusText;  
 } catch (error) {
   console.error('Error updating auction:', error);
   return {status:500,message:'Fetch failed',error};
