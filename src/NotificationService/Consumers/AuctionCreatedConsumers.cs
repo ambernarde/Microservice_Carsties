@@ -1,27 +1,17 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Contracts;
 using MassTransit;
 using Microsoft.AspNetCore.SignalR;
 using NotificationService.Hubs;
 
-namespace NotificationService.Consumers
+namespace NotificationService.Consumers;
+
+public class AuctionCreatedConsumer(IHubContext<NotificationHub> hubContext) : IConsumer<AuctionCreated>
 {
-    public class AuctionCreatedConsumers : IConsumer<AuctionCreated>
+    public async Task Consume(ConsumeContext<AuctionCreated> context)
     {
-        private readonly IHubContext<NotificationHub> _hubContext;
+        Console.WriteLine("==> auction created message received");
 
-        public AuctionCreatedConsumers(IHubContext<NotificationHub> hubContext)
-        {
-            _hubContext = hubContext;
-        }
-        public async Task Consume(ConsumeContext<AuctionCreated> context)
-        {
-            Console.WriteLine("--> auction created message received");
-
-            await _hubContext.Clients.All.SendAsync("AuctionCreated", context.Message);
-        }
+        await hubContext.Clients.All.SendAsync("AuctionCreated", context.Message);
     }
 }

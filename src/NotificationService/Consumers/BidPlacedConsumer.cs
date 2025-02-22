@@ -1,27 +1,17 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Contracts;
 using MassTransit;
 using Microsoft.AspNetCore.SignalR;
 using NotificationService.Hubs;
 
-namespace NotificationService.Consumers
+namespace NotificationService.Consumers;
+
+public class BidPlacedConsumer(IHubContext<NotificationHub> hubContext) : IConsumer<BidPlaced>
 {
-    public class BidPlacedConsumer : IConsumer<BidPlaced>
+    public async Task Consume(ConsumeContext<BidPlaced> context)
     {
-        private readonly IHubContext<NotificationHub> _hubContext;
+        Console.WriteLine("==> auction bid placed");
 
-        public BidPlacedConsumer(IHubContext<NotificationHub> hubContext)
-        {
-            _hubContext = hubContext;
-        }
-        public async Task Consume(ConsumeContext<BidPlaced> context)
-        {
-            Console.WriteLine("--> bid placed message received");
-
-            await _hubContext.Clients.All.SendAsync("BidPlaced", context.Message);
-        }        
+        await hubContext.Clients.All.SendAsync("BidPlaced", context.Message);
     }
 }
