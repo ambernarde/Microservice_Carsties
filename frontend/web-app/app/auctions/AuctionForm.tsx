@@ -27,10 +27,9 @@ export default function AuctionForm({auction} : Props) {
          reset ({make,model,color,mileage,year});
       }
        setFocus('make');
-    },[setFocus])
+    },[setFocus,auction,reset])
 
   async function onSubmit(data: FieldValues){
-    console.log(data);
     try {
       let id = '';
       let res;
@@ -48,9 +47,14 @@ export default function AuctionForm({auction} : Props) {
         }
         router.push(`/auctions/details/${id}`)
 
-    } catch (error : any) {
-        toast.error(error.status + ' ' + error.message)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
     }
+    
   }
 
   return (

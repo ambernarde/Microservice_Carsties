@@ -7,7 +7,7 @@ import { User } from 'next-auth'
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import BidItem from './BidItem'
-import { numberWithCommas } from '@/lib/numberWithComma'
+import { numberWithCommas } from '@/app/lib/numberWithComma'
 import EmptyFilter from '@/app/components/EmptyFilter'
 import BidForm from './BidForm'
 
@@ -33,9 +33,10 @@ export default function BidList({user,auction}: Props) {
 
   useEffect(() => {
     getBidsForAuction(auction.id)
-      .then((res:any) => {
-        if(res.error) {
-          throw res.console.error();
+      .then((res: Bid[] | {error : string}) => {
+        if("error" in res) {
+          console.error(res.error);
+          throw  new Error(res.error);
           }
           setBids(res as Bid[])
       }).catch(err => {

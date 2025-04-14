@@ -1,4 +1,5 @@
 'use client'
+
 import { useParamsStore } from '@/hooks/useParamsStore'
 import React from 'react'
 import Heading from './Heading'

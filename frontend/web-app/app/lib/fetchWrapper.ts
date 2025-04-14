@@ -1,6 +1,6 @@
 import { auth } from '@/auth';
 
-const baseUrl = 'http://localhost:6001/';
+const baseUrl = process.env.API_URL;
 
 
 async function get(url:string) {
@@ -14,7 +14,7 @@ async function get(url:string) {
 }
 
 
-async function post(url:string, body: {}) {
+async function post(url:string, body: unknown) {
   const requestOptions = {
      method:'POST',
      headers: await getHeaders(),
@@ -24,7 +24,7 @@ async function post(url:string, body: {}) {
   return handleResponse(response);
 }
 
-async function put(url:string, body: {}) {
+async function put(url:string, body: unknown) {
   const requestOptions = {
      method:'PUT',
      headers: await getHeaders(),
@@ -34,7 +34,7 @@ async function put(url:string, body: {}) {
   return handleResponse(response);
 }
 
-async function del(url:string, body: {}) {
+async function del(url:string) {
   const requestOptions = {
      method:'DELETE',
      headers: await getHeaders()
@@ -48,7 +48,7 @@ async function getHeaders() {
   const session = await auth();
   const headers = {
     'Content-type': 'application/json'
-  }as any;
+  }as Record<string,string>;
   if(session?.accessToken) {
       headers.Authorization = 'Bearer ' + session.accessToken
   }
@@ -63,7 +63,8 @@ async function handleResponse(response: Response) {
   try {
       data = JSON.parse (text); 
   } catch (error) {
-      data=text;
+      //data=text;
+      console.error("Delete request failed", error);
   }
 
   if(response.ok){
